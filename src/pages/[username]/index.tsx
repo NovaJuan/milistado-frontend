@@ -98,6 +98,8 @@ const Profile = ({ store }: InferGetStaticPropsType<typeof getStaticProps>) => {
             </Link>
           ))}
         </ul>
+
+        <p className='mt-4'> <Link href={`/${store?.username}/new-product`} passHref><a className='font-normal text-sm'>New Product</a></Link></p>
       </main>
     </>
   )
