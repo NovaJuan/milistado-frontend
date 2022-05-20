@@ -1,21 +1,20 @@
-import { onAuthStateChanged } from 'firebase/auth'
-import React, { useContext, useEffect, useReducer } from 'react'
-
 import { firebaseAuth } from '../../utils/firebase'
 import { clearUserAction, finishedSignInAction, logOutAction, signInAction, startSignInAction } from './actions'
 import AuthReducer, { AuthActionsTypes, initialState } from './reducer'
+import { onAuthStateChanged } from 'firebase/auth'
+import React, { useContext, useEffect, useReducer } from 'react'
 
 const AuthContext = React.createContext(initialState)
 const DispatchContext = React.createContext<React.Dispatch<AuthActionsTypes>>(() => null)
 
-export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
+export function AuthContextProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(AuthReducer, initialState)
 
   useEffect(() => {
     startSignInAction(dispatch)()
     onAuthStateChanged(firebaseAuth, (user) => {
       if (user) {
-        signInAction(dispatch)({ name: user.displayName ?? '', email: user.email ?? '' })
+        signInAction(dispatch)({ name: user.displayName ?? '', email: user.email ?? '', id: user.uid })
       } else {
         clearUserAction(dispatch)()
       }

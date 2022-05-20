@@ -1,8 +1,7 @@
-import { signOut } from 'firebase/auth'
-import React from 'react'
-
 import { firebaseAuth } from '../../utils/firebase'
 import { AuthActionsTypes } from './reducer'
+import { signOut } from 'firebase/auth'
+import React from 'react'
 
 export const startSignInAction = (dispatch: React.Dispatch<AuthActionsTypes>) => () => {
   dispatch({ type: 'START_SIGN_IN' })
