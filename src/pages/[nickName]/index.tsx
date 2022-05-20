@@ -1,18 +1,17 @@
+import Navbar from '../../components/Navbar'
+import { db } from '../../utils/firebase'
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { GetStaticPropsContext, InferGetStaticPropsType } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import Navbar from '../../components/Navbar'
-import { db } from '../../utils/firebase'
-
 export const getStaticPaths = async () => {
   const stores = await getDocs(collection(db, 'stores'))
 
   const paths = stores.docs.map((doc) => ({
     params: {
-      username: doc.data().username,
+      nickname: doc.data().nickname,
     },
   }))
 
@@ -22,8 +21,8 @@ export const getStaticPaths = async () => {
   }
 }
 
-export const getStaticProps = async (ctx: GetStaticPropsContext<{ username: string }>) => {
-  const storeQuery = query(collection(db, 'stores'), where('username', '==', ctx.params?.username))
+export const getStaticProps = async (ctx: GetStaticPropsContext<{ nickname: string }>) => {
+  const storeQuery = query(collection(db, 'stores'), where('nickname', '==', ctx.params?.nickname))
 
   const stores = await getDocs(storeQuery)
 
@@ -32,7 +31,7 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ username: stri
       ({
         id: store.id,
         ...store.data(),
-      } as { id: string; username: string; name: string }),
+      } as { id: string; nickname: string; fullName: string }),
   )
 
   const store = parsedStores[0]
@@ -80,18 +79,18 @@ const Profile = ({ store }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
       <Head>
-        <title>{store?.username}</title>
+        <title>{store?.nickname}</title>
       </Head>
 
       <Navbar />
 
       <main className="container mx-auto px-4 py-3">
-        <h1 className="text-3xl font-bold">{store?.name}</h1>
-        <h2 className="">@{store?.username}</h2>
+        <h1 className="text-3xl font-bold">{store?.fullName}</h1>
+        <h2 className="">@{store?.nickname}</h2>
 
         <ul className="pl-4 mt-4">
           {store?.items.map((item) => (
-            <Link href={`/${store?.username}/${item.id}`} key={item.id} passHref>
+            <Link href={`/${store?.nickname}/${item.id}`} key={item.id} passHref>
               <a className="block">
                 <li className="list-disc text-lg">{item.name}</li>
               </a>
@@ -99,7 +98,12 @@ const Profile = ({ store }: InferGetStaticPropsType<typeof getStaticProps>) => {
           ))}
         </ul>
 
-        <p className='mt-4'> <Link href={`/${store?.username}/new-product`} passHref><a className='font-normal text-sm'>New Product</a></Link></p>
+        <p className="mt-4">
+          {' '}
+          <Link href={`/${store?.nickname}/new-product`} passHref>
+            <a className="font-normal text-sm">New Product</a>
+          </Link>
+        </p>
       </main>
     </>
   )
