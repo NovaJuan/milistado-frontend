@@ -49,7 +49,7 @@ const CreateFirstStoreView = () => {
       const storesRef = collection(db, 'stores')
 
       await addDoc(storesRef, {
-        fullName: storeName,
+        fullname: storeName,
         nickname: storeNickname,
         userId: user?.id,
       })

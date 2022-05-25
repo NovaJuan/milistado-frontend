@@ -40,7 +40,7 @@ const Home = ({ stores }: InferGetServerSidePropsType<typeof getServerSideProps>
           <div className="border-b last:border-none border-gray-400 py-5" key={store.id}>
             <Link href={`/${store.nickname}`} passHref>
               <a className="block">
-                <h2 className="text-xl font-bold">{store.fullName}</h2>
+                <h2 className="text-xl font-bold">{store.fullname}</h2>
               </a>
             </Link>
             <ul className="pl-4">

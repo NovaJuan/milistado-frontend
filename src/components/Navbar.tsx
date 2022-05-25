@@ -1,7 +1,6 @@
+import { useAuthState } from '../contexts/AuthContext'
 import Link from 'next/link'
 import React from 'react'
-
-import { useAuthState } from '../contexts/AuthContext'
 
 const Navbar = () => {
   const {
@@ -34,13 +33,15 @@ const Navbar = () => {
                 </a>
               </Link>
             </li>
-            <li>
-              <Link href="/create-store" passHref>
-                <a>
-                  <span className="text-gray-300 hover:text-white">Create Store</span>
-                </a>
-              </Link>
-            </li>
+            {!!user && (
+              <li>
+                <Link href="/new-store" passHref>
+                  <a>
+                    <span className="text-gray-300 hover:text-white">New Store</span>
+                  </a>
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
 

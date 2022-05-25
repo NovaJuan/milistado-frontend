@@ -31,7 +31,7 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ nickname: stri
       ({
         id: store.id,
         ...store.data(),
-      } as { id: string; nickname: string; fullName: string }),
+      } as { id: string; nickname: string; fullname: string }),
   )
 
   const store = parsedStores[0]
@@ -85,7 +85,7 @@ const Profile = ({ store }: InferGetStaticPropsType<typeof getStaticProps>) => {
       <Navbar />
 
       <main className="container mx-auto px-4 py-3">
-        <h1 className="text-3xl font-bold">{store?.fullName}</h1>
+        <h1 className="text-3xl font-bold">{store?.fullname}</h1>
         <h2 className="">@{store?.nickname}</h2>
 
         <ul className="pl-4 mt-4">

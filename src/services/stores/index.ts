@@ -1,4 +1,4 @@
-import { db } from '../utils/firebase'
+import { db } from '../../utils/firebase'
 import { collection, doc, getDoc, getDocs, query, QueryConstraint, where } from 'firebase/firestore'
 
 interface GetStoresParams {
@@ -19,7 +19,7 @@ export const getStores = async (params?: GetStoresParams) => {
       ({
         id: doc.id,
         ...doc.data(),
-      } as { id: string; nickname: string; fullName: string }),
+      } as { id: string; nickname: string; fullname: string }),
   )
 
   return parsedStores
@@ -33,7 +33,7 @@ export const getStoreById = async (id: string) => {
   return {
     id: store.id,
     ...store.data(),
-  } as { id: string; nickname: string; fullName: string }
+  } as { id: string; nickname: string; fullname: string }
 }
 
 export const getStoreByNickname = async (nickname: string) => {
@@ -46,7 +46,7 @@ export const getStoreByNickname = async (nickname: string) => {
       ({
         id: doc.id,
         ...doc.data(),
-      } as { id: string; nickname: string; fullName: string }),
+      } as { id: string; nickname: string; fullname: string }),
   )
 
   return parsedStores[0]
