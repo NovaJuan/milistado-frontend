@@ -14,7 +14,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext<{ nickna
       ({
         id: store.id,
         ...store.data(),
-      } as { id: string; nickname: string; fullName: string }),
+      } as { id: string; nickname: string; fullname: string }),
   )
 
   const store = parsedStores[0]

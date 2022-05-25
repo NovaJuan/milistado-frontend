@@ -1,24 +1,32 @@
 import Navbar from '../components/Navbar'
+import { useAuthState } from '../contexts/AuthContext'
 import { db } from '../utils/firebase'
 import { addDoc, collection } from 'firebase/firestore'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
 
-const CreateStore = () => {
+const NewStore = () => {
   const [storeName, setStoreName] = useState('')
   const [storeNickname, setStoreNickname] = useState('')
 
   const router = useRouter()
 
+  const {
+    state: { user },
+  } = useAuthState()
+
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (!user) return
 
     const storesRef = collection(db, 'stores')
 
     await addDoc(storesRef, {
-      name: storeName,
+      fullname: storeName,
       nickname: storeNickname,
+      userId: user.id,
     })
 
     router.push('/')
@@ -46,7 +54,7 @@ const CreateStore = () => {
           />
           <input
             value={storeNickname}
-            onChange={(e) => setStoreNickname(e.currentTarget.value)}
+            onChange={(e) => setStoreNickname(e.currentTarget.value.replace(/[^A-Za-z0-9_.]/, '').toLowerCase())}
             type="text"
             name="storeNickname"
             id="storeNickname"
@@ -62,4 +70,4 @@ const CreateStore = () => {
   )
 }
 
-export default CreateStore
+export default NewStore
