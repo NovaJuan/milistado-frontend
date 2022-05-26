@@ -1,7 +1,7 @@
 import Navbar from '../components/Navbar'
 import { useAuthState } from '../contexts/AuthContext'
 import { db } from '../utils/firebase'
-import { addDoc, collection } from 'firebase/firestore'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
@@ -27,6 +27,8 @@ const NewStore = () => {
       fullname: storeName,
       nickname: storeNickname,
       userId: user.id,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     })
 
     router.push('/')

@@ -1,6 +1,6 @@
 import Navbar from '../../components/Navbar'
 import { db } from '../../utils/firebase'
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore'
+import { addDoc, collection, getDocs, query, serverTimestamp, where } from 'firebase/firestore'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -40,22 +40,31 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext<{ nickna
 
 const NewProduct = ({ store }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [productName, setProductName] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const router = useRouter()
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
 
-    if (!productName) return
+    if (!productName || isLoading) return
 
-    const itemsRef = collection(db, 'items')
+    try {
+      setIsLoading(true)
 
-    await addDoc(itemsRef, {
-      storeId: store.id,
-      name: productName,
-    })
+      const itemsRef = collection(db, 'items')
 
-    router.push(`/${store.nickname}`)
+      await addDoc(itemsRef, {
+        storeId: store.id,
+        name: productName,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      })
+
+      router.push(`/${store.nickname}`)
+    } catch (error) {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -81,10 +90,10 @@ const NewProduct = ({ store }: InferGetServerSidePropsType<typeof getServerSideP
             name="productName"
             id="productName"
             className="w-32 mr-2 rounded px-2 py-0.5 text-black mb-2"
-            placeholder="Store name"
+            placeholder="Product name"
           />
           <button type="submit" className="px-4 py-1.5 rounded bg-slate-400 w-28">
-            Save
+            {isLoading ? 'Creating...' : 'Save'}
           </button>
         </form>
       </main>

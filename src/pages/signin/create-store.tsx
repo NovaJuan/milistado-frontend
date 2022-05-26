@@ -1,6 +1,6 @@
 import { useAuthState } from '../../contexts/AuthContext'
 import { db } from '../../utils/firebase'
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore'
+import { addDoc, collection, serverTimestamp, getDocs, query, where } from 'firebase/firestore'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
 
@@ -52,6 +52,8 @@ const CreateFirstStoreView = () => {
         fullname: storeName,
         nickname: storeNickname,
         userId: user?.id,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       })
 
       router.push('/')

@@ -1,37 +1,22 @@
 import Navbar from '../../components/Navbar'
-import { db } from '../../utils/firebase'
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
+import { getItem } from '../../services/items'
+import { getStores } from '../../services/stores'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext<{ nickname: string; productId: string }>) => {
-  const storeQuery = query(collection(db, 'stores'), where('nickname', '==', ctx.params?.nickname))
+  const stores = await getStores({ nickname: ctx.params?.nickname })
 
-  const stores = await getDocs(storeQuery)
+  const store = stores[0]
 
-  const parsedStores = stores.docs.map(
-    (store) =>
-      ({
-        id: store.id,
-        ...store.data(),
-      } as { id: string; nickname: string; fullname: string }),
-  )
+  const item = await getItem({ productId: ctx.params?.productId ?? '' })
 
-  const store = parsedStores[0]
-
-  const item = await getDoc(doc(db, 'items', ctx.params?.productId ?? ''))
-
-  const product = {
-    id: item.id,
-    ...item.data(),
-  } as { id: string; storeId: string; name: string }
-
-  if (!store || !product) {
+  if (!store || !item) {
     return {
       notFound: true,
       props: {
         store,
-        item: product,
+        item,
       },
     }
   }
@@ -39,17 +24,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext<{ nickna
   return {
     props: {
       store,
-      product,
+      item,
     },
   }
 }
 
-const ProductPage = ({ store, product }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const ProductPage = ({ store, item }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <>
       <Head>
         <title>
-          {product?.name} - {store?.nickname}
+          {item?.name} - {store?.nickname}
         </title>
       </Head>
 
@@ -57,7 +42,7 @@ const ProductPage = ({ store, product }: InferGetServerSidePropsType<typeof getS
 
       <main className="container mx-auto px-4 py-3">
         <h2 className="">@{store?.nickname}</h2>
-        <h1 className="text-3xl font-bold">{product?.name}</h1>
+        <h1 className="text-3xl font-bold">{item?.name}</h1>
       </main>
     </>
   )
