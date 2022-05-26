@@ -1,17 +1,17 @@
 import Navbar from '../../components/Navbar'
-import { db } from '../../utils/firebase'
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import { getItems } from '../../services/items'
+import { getStores } from '../../services/stores'
 import { GetStaticPropsContext, InferGetStaticPropsType } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 export const getStaticPaths = async () => {
-  const stores = await getDocs(collection(db, 'stores'))
+  const stores = await getStores()
 
-  const paths = stores.docs.map((doc) => ({
+  const paths = stores.map((store) => ({
     params: {
-      nickname: doc.data().nickname,
+      nickname: store.nickname,
     },
   }))
 
@@ -22,19 +22,9 @@ export const getStaticPaths = async () => {
 }
 
 export const getStaticProps = async (ctx: GetStaticPropsContext<{ nickname: string }>) => {
-  const storeQuery = query(collection(db, 'stores'), where('nickname', '==', ctx.params?.nickname))
+  const stores = await getStores({ nickname: ctx.params?.nickname })
 
-  const stores = await getDocs(storeQuery)
-
-  const parsedStores = stores.docs.map(
-    (store) =>
-      ({
-        id: store.id,
-        ...store.data(),
-      } as { id: string; nickname: string; fullname: string }),
-  )
-
-  const store = parsedStores[0]
+  const store = stores[0]
 
   if (!store) {
     return {
@@ -43,20 +33,10 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ nickname: stri
     }
   }
 
-  const itemsQuery = query(collection(db, 'items'), where('storeId', '==', store.id))
-
-  const items = await getDocs(itemsQuery)
-
-  const parsedItems = items.docs.map(
-    (doc) =>
-      ({
-        id: doc.id,
-        ...doc.data(),
-      } as { id: string; name: string }),
-  )
+  const items = await getItems({ storeId: store.id })
 
   return {
-    props: { store: { ...store, items: parsedItems } },
+    props: { store: { ...store, items } },
     revalidate: 30,
   }
 }
