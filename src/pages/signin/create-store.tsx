@@ -1,3 +1,4 @@
+import Layout from '../../components/Layout'
 import { useAuthState } from '../../contexts/AuthContext'
 import { db } from '../../utils/firebase'
 import { addDoc, collection, serverTimestamp, getDocs, query, where } from 'firebase/firestore'
@@ -68,7 +69,7 @@ const CreateFirstStoreView = () => {
   }
 
   return (
-    <>
+    <Layout>
       <h1 className="text-xl font-bold mb-8">Create first store</h1>
       <form className="flex flex-col" onSubmit={onSubmit}>
         <input
@@ -93,7 +94,7 @@ const CreateFirstStoreView = () => {
           Save
         </button>
       </form>
-    </>
+    </Layout>
   )
 }
 

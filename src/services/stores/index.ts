@@ -20,6 +20,8 @@ export const getStores = async (params?: GetStoresParams) => {
   const parsedStores = stores.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
+    createdAt: doc.data()?.createdAt.seconds,
+    updatedAt: doc.data()?.updatedAt.seconds,
   }))
 
   return parsedStores as Store[]
@@ -28,12 +30,14 @@ export const getStores = async (params?: GetStoresParams) => {
 export const getStoreById = async (id: string) => {
   const storeRef = doc(db, 'stores', id)
 
-  const store = await getDoc(storeRef)
+  const storeDoc = await getDoc(storeRef)
 
   return {
-    id: store.id,
-    ...store.data(),
-  } as { id: string; nickname: string; fullname: string }
+    id: storeDoc.id,
+    ...storeDoc.data(),
+    createdAt: storeDoc.data()?.createdAt.seconds,
+    updatedAt: storeDoc.data()?.updatedAt.seconds,
+  } as Store
 }
 
 export const getStoreByNickname = async (nickname: string) => {
@@ -46,7 +50,9 @@ export const getStoreByNickname = async (nickname: string) => {
       ({
         id: doc.id,
         ...doc.data(),
-      } as { id: string; nickname: string; fullname: string }),
+        createdAt: doc.data()?.createdAt.seconds,
+        updatedAt: doc.data()?.updatedAt.seconds,
+      } as Store),
   )
 
   return parsedStores[0]

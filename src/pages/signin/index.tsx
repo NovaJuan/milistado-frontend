@@ -1,3 +1,4 @@
+import Layout from '../../components/Layout'
 import { useAuthState } from '../../contexts/AuthContext'
 import { getStores } from '../../services/stores'
 import { firebaseAuth } from '../../utils/firebase'
@@ -47,9 +48,12 @@ const SignInView = () => {
   }
 
   return (
-    <div>
-      <StyledFirebaseAuth uiConfig={firebaseUIConfig} firebaseAuth={firebaseAuth} />
-    </div>
+    <Layout>
+      <div className="w-full max-w-92 mx-auto py-20">
+        <h1 className="font-bold text-3xl text-center mb-6">milistado</h1>
+        <StyledFirebaseAuth uiConfig={firebaseUIConfig} firebaseAuth={firebaseAuth} />
+      </div>
+    </Layout>
   )
 }
 
