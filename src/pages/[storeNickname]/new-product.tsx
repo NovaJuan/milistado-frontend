@@ -1,26 +1,16 @@
 import Navbar from '../../components/Navbar'
+import { useAuthState } from '../../contexts/AuthContext'
+import { getStoreByNickname } from '../../services/stores'
 import { db } from '../../utils/firebase'
-import { addDoc, collection, getDocs, query, serverTimestamp, where } from 'firebase/firestore'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext<{ nickname: string }>) => {
-  const storeQuery = query(collection(db, 'stores'), where('nickname', '==', ctx.params?.nickname))
-
-  const stores = await getDocs(storeQuery)
-
-  const parsedStores = stores.docs.map(
-    (store) =>
-      ({
-        id: store.id,
-        ...store.data(),
-      } as { id: string; nickname: string; fullname: string }),
-  )
-
-  const store = parsedStores[0]
+export const getServerSideProps = async (ctx: GetServerSidePropsContext<{ storeNickname: string }>) => {
+  const store = await getStoreByNickname(ctx.params?.storeNickname ?? '')
 
   if (!store) {
     return {
@@ -44,6 +34,14 @@ const NewProduct = ({ store }: InferGetServerSidePropsType<typeof getServerSideP
 
   const router = useRouter()
 
+  const {
+    state: { user },
+  } = useAuthState()
+
+  useEffect(() => {
+    if (!user || user?.id !== store.userId) router.push('/')
+  }, [])
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
 
@@ -63,6 +61,7 @@ const NewProduct = ({ store }: InferGetServerSidePropsType<typeof getServerSideP
 
       router.push(`/${store.nickname}`)
     } catch (error) {
+      console.error(error)
       setIsLoading(false)
     }
   }

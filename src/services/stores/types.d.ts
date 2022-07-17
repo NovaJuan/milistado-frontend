@@ -1,3 +1,5 @@
+import { Item } from '../items/types'
+
 export interface Store {
   id: string
   fullname: string
@@ -5,4 +7,5 @@ export interface Store {
   userId: string
   createdAt: number
   updatedAt: number
+  items?: Item[]
 }
