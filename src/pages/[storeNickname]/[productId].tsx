@@ -4,8 +4,10 @@ import { getStores } from '../../services/stores'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext<{ nickname: string; productId: string }>) => {
-  const stores = await getStores({ nickname: ctx.params?.nickname })
+export const getServerSideProps = async (
+  ctx: GetServerSidePropsContext<{ storeNickname: string; productId: string }>,
+) => {
+  const stores = await getStores({ nickname: ctx.params?.storeNickname })
 
   const store = stores[0]
 

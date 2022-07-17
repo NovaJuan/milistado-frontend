@@ -1,6 +1,18 @@
 import { db } from '../../utils/firebase'
 import { Store } from './types'
-import { collection, doc, getDoc, getDocs, query, QueryConstraint, where } from 'firebase/firestore'
+import {
+  collection,
+  deleteDoc,
+  doc,
+  DocumentData,
+  getDoc,
+  getDocs,
+  query,
+  QueryConstraint,
+  updateDoc,
+  where,
+  writeBatch,
+} from 'firebase/firestore'
 
 interface GetStoresParams {
   userId?: string
@@ -56,4 +68,32 @@ export const getStoreByNickname = async (nickname: string) => {
   )
 
   return parsedStores[0]
+}
+
+export const deleteStore = async (storeId: string) => {
+  await deleteDoc(doc(db, 'stores', storeId))
+
+  const batch = writeBatch(db)
+
+  const items = await getDocs(query(collection(db, 'items'), where('storeId', '==', storeId)))
+  items.forEach((item) => batch.delete(item.ref))
+
+  await batch.commit()
+
+  return true
+}
+
+export const updateStore = async (id: string, data: Omit<Partial<Store>, 'id' | 'userId' | 'createdAt'>) => {
+  const storeRef = doc(db, 'stores', id)
+
+  await updateDoc(storeRef, data)
+
+  const storeDoc = await getDoc(storeRef)
+
+  return {
+    id: storeDoc.id,
+    ...storeDoc.data(),
+    createdAt: storeDoc.data()?.createdAt.seconds,
+    updatedAt: storeDoc.data()?.updatedAt.seconds,
+  } as Store
 }

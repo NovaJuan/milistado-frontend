@@ -1,4 +1,5 @@
 import Layout from '../components/Layout'
+import { useAuthState } from '../contexts/AuthContext'
 import { getItems } from '../services/items'
 import { getStores } from '../services/stores'
 import { InferGetServerSidePropsType } from 'next'
@@ -28,6 +29,9 @@ export const getServerSideProps = async () => {
 }
 
 const Home = ({ stores }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const {
+    state: { user },
+  } = useAuthState()
   return (
     <>
       <Head>
@@ -57,6 +61,10 @@ const Home = ({ stores }: InferGetServerSidePropsType<typeof getServerSideProps>
                     ))}
                   </ul>
                 </div>
+
+                {user?.id === store.userId && (
+                  <p className="inline-block text-xs font-thin text-center p-1">Owned by you</p>
+                )}
               </div>
             ))}
           </div>

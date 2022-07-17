@@ -10,12 +10,15 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@hookform/resolvers": "^2.9.3",
     "firebase": "^9.6.10",
     "firebase-admin": "^10.0.2",
     "next": "12.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-firebaseui": "^6.0.0"
+    "react-firebaseui": "^6.0.0",
+    "react-hook-form": "^7.33.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
