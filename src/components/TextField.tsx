@@ -37,7 +37,7 @@ const TextField = (
     <div className={fullWrapperClassName ?? `flex flex-col ${wrapperClassName ?? ''}`}>
       {label && (
         <label htmlFor={props.id} className={fullLabelClassName ?? `text-sm mb-0.5 ${labelClassName ?? ''}`}>
-          Store nickname
+          {label}
         </label>
       )}
       <input

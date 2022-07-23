@@ -46,15 +46,24 @@ const Navbar = () => {
         </nav>
 
         <nav className="ml-auto">
-          <ul>
+          <ul className="flex space-x-3">
             {!user ? (
-              <li>
-                <Link href="/signin" passHref>
-                  <a>
-                    <span className="text-gray-300 hover:text-white">Sign in</span>
-                  </a>
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link href="/signin" passHref>
+                    <a>
+                      <span className="text-gray-300 hover:text-white">Sign in</span>
+                    </a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/register" passHref>
+                    <a>
+                      <span className="text-gray-300 hover:text-white">Register</span>
+                    </a>
+                  </Link>
+                </li>
+              </>
             ) : (
               <li>
                 <a onClick={logOut}>
