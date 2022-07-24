@@ -50,7 +50,11 @@ const TextField = (
         }
         ref={ref}
       />
-      {error && <span className={fullErrorClassName ?? `block text-red-600 text-sm ${errorClassName}`}>{error}</span>}
+      {error && (
+        <span className={fullErrorClassName ?? `block text-red-500 font-semibold text-sm ${errorClassName}`}>
+          {error}
+        </span>
+      )}
       {!error && hint && (
         <span className={fullHintClassName ?? `block text-gray-400 text-sm ${hintClassName}`}>{hint}</span>
       )}

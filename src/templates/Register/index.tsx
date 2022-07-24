@@ -4,7 +4,7 @@ import { useAuthState } from '../../contexts/AuthContext'
 import { getStores } from '../../services/stores'
 import { firebaseAuth } from '../../utils/firebase'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 import 'firebase/compat/auth'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -12,16 +12,20 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
 interface FormValues {
+  name: string
   email: string
   password: string
+  password2: string
 }
 
 const schema = yup.object({
+  name: yup.string().required('Name is required'),
   email: yup.string().required('Email is required').email('Email is malformed'),
   password: yup.string().required('Password is required'),
+  password2: yup.string().required('Password confirmation is required'),
 })
 
-const SignIn = () => {
+const Register = () => {
   const {
     state: { user, isLoadingUser },
   } = useAuthState()
@@ -70,7 +74,7 @@ const SignIn = () => {
     setGlobalError('')
 
     try {
-      await signInWithEmailAndPassword(firebaseAuth, email, password)
+      await createUserWithEmailAndPassword(firebaseAuth, email, password)
     } catch (error: any) {
       setIsLoading(false)
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
@@ -81,14 +85,23 @@ const SignIn = () => {
     }
   }
 
-  const { email, password } = watch()
+  const { email, password, password2, name } = watch()
 
   return (
     <Layout>
       <div className="container mx-auto mt-10">
         <form className="mx-auto max-w-116 w-full lg:bg-slate-700 rounded py-6" onSubmit={handleSubmit(onSubmit)}>
-          <h1 className="text-center text-2xl font-bold text-white">Sign in</h1>
+          <h1 className="text-center text-2xl font-bold text-white">Register</h1>
           <div className="mx-12 mt-3">
+            <TextField
+              {...register('name')}
+              label="Name"
+              type="text"
+              placeholder="Name"
+              value={name}
+              wrapperClassName="mb-4"
+              error={errors.name?.message}
+            />
             <TextField
               {...register('email')}
               label="Email"
@@ -103,8 +116,17 @@ const SignIn = () => {
               label="Password"
               type="password"
               placeholder="Password"
+              wrapperClassName="mb-4"
               value={password}
               error={errors.password?.message}
+            />
+            <TextField
+              {...register('password2')}
+              label="Confirm"
+              type="password"
+              placeholder="Confirm Password"
+              value={password2}
+              error={errors.password2?.message}
             />
           </div>
           {globalError && (
@@ -114,7 +136,7 @@ const SignIn = () => {
           )}
           <div className="flex items-center justify-center mx-12 mt-7">
             <button type="submit" className="w-88 mx-auto bg-blue-600 hover:bg-blue-500 py-2 px-3 rounded">
-              {isLoading ? 'Loading...' : 'Sign in'}
+              {isLoading ? 'Loading...' : 'Register'}
             </button>
           </div>
         </form>
@@ -123,4 +145,4 @@ const SignIn = () => {
   )
 }
 
-export default SignIn
+export default Register
